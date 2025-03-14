@@ -1,0 +1,104 @@
+<html>
+{% extends 'base.html' %}
+{% block pagetitle %}
+AI Engine
+{% endblock pagetitle %}
+
+{% block body %}
+<div class="container">
+    <div class="row mb-4 text-center">
+        <div class="col-lg-10 mx-auto">
+            <h1 class="display-4" style="padding-top: 2%; font-weight: 400; color: rgb(4, 54, 4);"><b>🍀 AI Engine 🍀</b></h1>
+            <p class="lead" style="font-weight: 500; color: black;">Let AI Engine help you detect plant diseases</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="p-4 bg-white shadow rounded-lg">
+                <h5><b>Why is it necessary to detect disease in plants?</b></h5>
+                <p>Plant diseases affect growth and can lead to losses. Early detection using AI allows for proper 
+                   diagnosis and control, saving time and resources.</p>
+            </div>
+        </div>
+
+        <!-- Middle Column (Image Upload & Camera) -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="p-4 bg-white shadow rounded-lg text-center">
+                <img src="https://www.pngjoy.com/pngl/250/4840262_plants-png-indoors-tropical-plant-png-hd-png.png"
+                     class="img-fluid d-block mx-auto mb-3 rounded-pill" alt="Plant Image">
+
+                <form action="/submit" method="POST" enctype="multipart/form-data">
+                    <div class="custom-file mb-3">
+                        <input type="file" id="actual-btn" hidden name="image" accept="image/*" />
+                        <label class="btn btn-outline-success w-100" for="actual-btn">Choose File</label>
+                        <span id="file-chosen" class="d-block mt-2 text-muted">No file chosen</span>
+                    </div>
+
+                    <button type="button" class="btn btn-outline-success w-100 mb-3" id="camera-btn">Open Camera</button>
+
+                    <!-- Camera feed -->
+                    <div id="camera-container" class="text-center" style="display: none;">
+                        <video id="camera-feed" class="w-100" autoplay></video>
+                        <button type="button" id="capture-btn" class="btn btn-success mt-2">Capture</button>
+                        <img id="preview" src="#" alt="Captured Image" class="img-fluid mt-2" style="display: none;" />
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 mt-3">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4 col-md-12">
+            <div class="p-4 bg-white shadow rounded-lg">
+                <h5><b>Prevent Plant Disease: Follow these steps</b></h5>
+                <ul>
+                    <li>Maintain proper sanitation</li>
+                    <li>Use fertilizers for plant health</li>
+                    <li>Inspect plants before buying</li>
+                    <li>Ensure good air circulation</li>
+                    <li>Rotate crops regularly</li>
+                </ul>
+                <a target="_blank" href="https://www.thespruce.com/prevent-plant-diseases-in-your-garden-2539511"
+                   class="btn btn-outline-success w-100">More info</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('actual-btn').addEventListener('change', function () {
+        document.getElementById('file-chosen').textContent = this.files[0].name;
+    });
+
+    document.getElementById('camera-btn').addEventListener('click', function () {
+        document.getElementById('camera-container').style.display = 'block';
+        startCamera();
+    });
+
+    function startCamera() {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(function (stream) {
+                document.getElementById('camera-feed').srcObject = stream;
+            })
+            .catch(function (error) {
+                console.log('Error accessing the camera: ', error);
+            });
+    }
+
+    document.getElementById('capture-btn').addEventListener('click', function () {
+        const video = document.getElementById('camera-feed');
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg');
+        document.getElementById('preview').src = dataUrl;
+        document.getElementById('preview').style.display = 'block';
+    });
+</script>
+
+{% endblock body %}
